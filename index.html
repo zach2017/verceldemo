@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZacMall - Online Shopping</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-gray-900 text-white p-2">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-bold">ZacMall</h1>
+                <div class="relative">
+                    <input type="text" id="searchInput" 
+                           class="w-96 p-2 rounded-l-md text-black" 
+                           placeholder="Search ZacMall...">
+                    <button id="searchBtn" 
+                            class="bg-yellow-400 text-black p-2 rounded-r-md hover:bg-yellow-500">
+                        Search
+                    </button>
+                </div>
+            </div>
+            <nav class="flex space-x-4">
+                <a href="#" class="hover:underline">Account</a>
+                <a href="#" class="hover:underline">Orders</a>
+                <a href="#" class="hover:underline">Cart</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto mt-4">
+        <!-- Banner -->
+        <div class="w-full h-64 bg-gray-300 mb-4">
+            <img src="https://source.unsplash.com/random/1200x300?shopping" 
+                 alt="ZacMall Banner" 
+                 class="w-full h-full object-cover">
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Product Card 1 -->
+            <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+                <img src="https://source.unsplash.com/random/300x300?electronics" 
+                     alt="Product 1" 
+                     class="w-full h-48 object-cover mb-2">
+                <h3 class="font-semibold">Wireless Headphones</h3>
+                <p class="text-gray-600">$59.99</p>
+                <button class="mt-2 bg-yellow-400 text-black px-4 py-2 rounded w-full hover:bg-yellow-500">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- Product Card 2 -->
+            <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+                <img src="https://source.unsplash.com/random/300x300?clothing" 
+                     alt="Product 2" 
+                     class="w-full h-48 object-cover mb-2">
+                <h3 class="font-semibold">Men's Jacket</h3>
+                <p class="text-gray-600">$89.99</p>
+                <button class="mt-2 bg-yellow-400 text-black px-4 py-2 rounded w-full hover:bg-yellow-500">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- Product Card 3 -->
+            <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+                <img src="https://source.unsplash.com/random/300x300?books" 
+                     alt="Product 3" 
+                     class="w-full h-48 object-cover mb-2">
+                <h3 class="font-semibold">Bestseller Book</h3>
+                <p class="text-gray-600">$19.99</p>
+                <button class="mt-2 bg-yellow-400 text-black px-4 py-2 rounded w-full hover:bg-yellow-500">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- Product Card 4 -->
+            <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+                <img src="https://source.unsplash.com/random/300x300?toys" 
+                     alt="Product 4" 
+                     class="w-full h-48 object-cover mb-2">
+                <h3 class="font-semibold">Kids Toy Set</h3>
+                <p class="text-gray-600">$34.99</p>
+                <button class="mt-2 bg-yellow-400 text-black px-4 py-2 rounded w-full hover:bg-yellow-500">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 ZacMall. All rights reserved.</p>
+            <div class="mt-2">
+                <a href="#" class="text-gray-400 hover:text-white mx-2">About</a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Contact</a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm) {
+                alert('Searching for: ' + searchTerm);
+                // Here you would typically implement actual search functionality
+            } else {
+                alert('Please enter a search term');
+            }
+        });
+
+        // Add hover effect for product cards
+        const productCards = document.querySelectorAll('.bg-white');
+        productCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('scale-105');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('scale-105');
+            });
+        });
+    </script>
+</body>
+</html>
