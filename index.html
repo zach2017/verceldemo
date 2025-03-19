@@ -25,7 +25,7 @@
             <nav class="flex space-x-4">
                 <a href="#" class="hover:underline">Account</a>
                 <a href="#" class="hover:underline">Orders</a>
-                <a href="#" class="hover:underline">Cart (<span id="cartCount">0</span>)</a>
+                <a href="#" id="cartLink" class="hover:underline">Cart (<span id="cartCount">0</span>)</a>
             </nav>
         </div>
     </header>
@@ -97,6 +97,28 @@
                 </button>
             </div>
         </div>
+
+        <!-- Cart Section -->
+        <section id="cartSection" class="mt-8 bg-white p-6 rounded shadow hidden">
+            <h2 class="text-2xl font-bold mb-4">Your Cart</h2>
+            <div id="cartItems" class="space-y-4"></div>
+            <div class="flex justify-between items-center mt-4">
+                <p class="text-lg font-semibold">Total: $<span id="cartTotal">0.00</span></p>
+                <form id="paypalForm" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                    <input type="hidden" name="cmd" value="_cart">
+                    <input type="hidden" name="upload" value="1">
+                    <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL@example.com">
+                    <input type="hidden" name="currency_code" value="USD">
+                    <button type="submit" id="paypalCheckout" 
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Checkout with PayPal
+                    </button>
+                </form>
+            </div>
+            <button id="clearCart" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                Clear Cart
+            </button>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -116,16 +138,65 @@
         // Initialize cart from localStorage or empty array
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+        // DOM Elements
+        const cartSection = document.getElementById('cartSection');
+        const cartItemsDiv = document.getElementById('cartItems');
+        const cartTotalSpan = document.getElementById('cartTotal');
+        const cartCountSpan = document.getElementById('cartCount');
+        const cartLink = document.getElementById('cartLink');
+        const paypalForm = document.getElementById('paypalForm');
+
         // Update cart count in header
         function updateCartCount() {
-            const cartCount = document.getElementById('cartCount');
-            cartCount.textContent = cart.length;
+            cartCountSpan.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
         }
 
         // Save cart to localStorage
         function saveCart() {
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartCount();
+            displayCart();
+        }
+
+        // Display cart items
+        function displayCart() {
+            cartItemsDiv.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between items-center border-b py-2';
+                itemDiv.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <span>$${itemTotal.toFixed(2)}</span>
+                `;
+                cartItemsDiv.appendChild(itemDiv);
+
+                // Add PayPal hidden inputs dynamically
+                const inputName = document.createElement('input');
+                inputName.type = 'hidden';
+                inputName.name = `item_name_${index + 1}`;
+                inputName.value = item.name;
+                paypalForm.appendChild(inputName);
+
+                const inputAmount = document.createElement('input');
+                inputAmount.type = 'hidden';
+                inputAmount.name = `amount_${index + 1}`;
+                inputAmount.value = item.price.toFixed(2);
+                paypalForm.appendChild(inputAmount);
+
+                const inputQuantity = document.createElement('input');
+                inputQuantity.type = 'hidden';
+                inputQuantity.name = `quantity_${index + 1}`;
+                inputQuantity.value = item.quantity;
+                paypalForm.appendChild(inputQuantity);
+            });
+
+            cartTotalSpan.textContent = total.toFixed(2);
+            cartSection.classList.toggle('hidden', cart.length === 0);
         }
 
         // Add to cart functionality
@@ -134,10 +205,7 @@
                 const name = this.getAttribute('data-name');
                 const price = parseFloat(this.getAttribute('data-price'));
                 
-                // Create product object
                 const product = { name, price, quantity: 1 };
-
-                // Check if product already exists in cart
                 const existingProduct = cart.find(item => item.name === name);
                 if (existingProduct) {
                     existingProduct.quantity += 1;
@@ -145,10 +213,23 @@
                     cart.push(product);
                 }
 
-                // Save and update
                 saveCart();
                 alert(`${name} added to cart!`);
             });
+        });
+
+        // Toggle cart visibility
+        cartLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            cartSection.classList.toggle('hidden');
+            displayCart();
+        });
+
+        // Clear cart
+        document.getElementById('clearCart').addEventListener('click', function() {
+            cart = [];
+            saveCart();
+            paypalForm.querySelectorAll('input[name^="item_name_"], input[name^="amount_"], input[name^="quantity_"]').forEach(input => input.remove());
         });
 
         // Search functionality
@@ -164,16 +245,13 @@
         // Hover effect for product cards
         const productCards = document.querySelectorAll('.bg-white');
         productCards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.classList.add('scale-105');
-            });
-            card.addEventListener('mouseleave', () => {
-                card.classList.remove('scale-105');
-            });
+            card.addEventListener('mouseenter', () => card.classList.add('scale-105'));
+            card.addEventListener('mouseleave', () => card.classList.remove('scale-105'));
         });
 
-        // Initial cart count update on page load
+        // Initial cart setup
         updateCartCount();
+        displayCart();
     </script>
 </body>
 </html>
